@@ -13,9 +13,9 @@ env:
 
 jobs:
   docker:
-    concurrency:  #remove this 👈
-      group: production-build  #remove this 👈
-      cancel-in-progress: false  #remove this 👈
+    concurrency:  
+      group: production-build 
+      cancel-in-progress: false  
     runs-on: ubuntu-latest
     
     steps:
