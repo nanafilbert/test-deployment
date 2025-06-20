@@ -3,7 +3,11 @@ name: CI/CD Pipeline to Deploy Static Website to S3
 on:
   push:
     branches:
-    - main
+      - main
+
+permissions:
+  contents: read
+  security-events: write  # Required for CodeQL to upload results
 
 jobs:
   security-scan:
@@ -17,10 +21,15 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: javascript
+          languages: javascript  # or html, python, etc. — adjust to your project
+
+      - name: Autobuild Code
+        uses: github/codeql-action/autobuild@v3
 
       - name: Run CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        with:
+          category: "security"
 
   deploy:
     name: Deploy to S3
@@ -32,7 +41,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -40,6 +49,4 @@ jobs:
 
       - name: Sync Files to S3
         run: |
-          aws s3 sync ./ s3://${{ secrets.S3_BUCKET_NAME }} \
-            --delete \
-
+          aws s3 sync ./ s3://${{ secrets.S3_BUCKET_NAME }} --delete
