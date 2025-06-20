@@ -1,4 +1,4 @@
-name: Docker Workflow
+name: concurrency
 
 on:
   push:
@@ -13,6 +13,9 @@ env:
 
 jobs:
   docker:
+    concurrency:  #remove this 👈
+      group: production-build  #remove this 👈
+      cancel-in-progress: false  #remove this 👈
     runs-on: ubuntu-latest
     
     steps:
@@ -30,9 +33,6 @@ jobs:
   
   deploy:
     needs: docker
-    concurrency:  #remove this 👈
-      group: production-deployment  #remove this 👈
-      cancel-in-progress: true  #remove this 👈
     runs-on: ubuntu-latest
     
     steps:
@@ -43,4 +43,5 @@ jobs:
         run: |
           docker run -d -p 8080:80 ${{ env.CONTAINER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
           sleep 300s 
-        #.
+
+#
