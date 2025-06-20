@@ -6,9 +6,7 @@ on:
 
 jobs: 
   deploy-on-ubuntu: 
-    concurrency:
-      group: production-deployment
-      cancel-in-progress: true
+
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
@@ -18,7 +16,7 @@ jobs:
       run: docker info
 
     - name: Run Images
-      run: docker run "hello-world"
+      run: docker run "filbertnana/test-app"
 
   deploy-on-windows:  
     runs-on: windows-latest
@@ -30,6 +28,6 @@ jobs:
         run: docker info
 
       - name: Run Images
-        run: docker run "hello-world"    
+        run: docker run "filbertnana/test-app"    
 
         #
