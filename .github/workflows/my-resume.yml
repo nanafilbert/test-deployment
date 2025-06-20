@@ -3,7 +3,11 @@ name: CI/CD Pipeline to Deploy Static Website to S3
 on:
   push:
     branches:
-    - main
+      - main
+
+permissions:
+  contents: read
+  security-events: write  # Required for CodeQL to upload results
 
 jobs:
   security-scan:
@@ -13,6 +17,14 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript  # or html, python, etc. — adjust to your project
+
+      - name: Autobuild Code
+        uses: github/codeql-action/autobuild@v3
 
       - name: Run CodeQL Analysis
         uses: github/codeql-action/analyze@v3
