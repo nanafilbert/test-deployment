@@ -6,6 +6,9 @@ on:
 
 jobs: 
   deploy-on-ubuntu: 
+    concurrency:
+      group: production-deployment
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
