@@ -5,29 +5,18 @@ on:
   workflow_dispatch:
 
 jobs: 
-  deploy-on-ubuntu: 
+  deploy:
+    strategy: 
+      matrix: #remove this 👈
+        os: [ubuntu-latest, ubuntu-20.04, windows-latest] #remove this 👈
+        images: [hello-world, alpine] #remove this 👈
 
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+    runs-on: ${{ matrix.os }} #remove this 👈 # referencing the os defined by the matrix above
 
-    - name: Echo Docker Details
-      run: docker info
-
-    - name: Run Images
-      run: docker run "filbertnana/test-app"
-
-  deploy-on-windows:  
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
+    steps: 
       - name: Echo Docker Details
         run: docker info
 
-      - name: Run Images
-        run: docker run "filbertnana/test-app"    
-
-        #
+    
+      - name: Run Images on ${{ matrix.os }}
+        run: docker run ${{ matrix.images }}
