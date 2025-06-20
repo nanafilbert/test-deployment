@@ -1,0 +1,43 @@
+name: CI/CD Pipeline to Deploy Static Website to S3
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Enable Dependabot
+        uses: dependabot/fetch-metadata@v1
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "security"
+
+  deploy:
+    name: Deploy to S3
+    needs: security-scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Sync Files to S3
+        run: |
+          aws s3 sync ./ s3://${{ secrets.S3_BUCKET_NAME }} --delete
