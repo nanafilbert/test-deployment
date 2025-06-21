@@ -6,12 +6,16 @@ on:
 
 jobs: 
   deploy:
+    environment: prod
     strategy: 
-      matrix: #remove this 👈
-        os: [ubuntu-latest, ubuntu-20.04, windows-latest] #remove this 👈
-        images: [hello-world, alpine] #remove this 👈
+      matrix: 
+        os: [ubuntu-latest, ubuntu-20.04, windows-latest]
+        images: [hello-world, alpine]
+        exclude:  #remove this 👈 #excluding alpine image on windows os
+          - images: alpine #remove this 👈
+            os: windows-latest #remove this 👈
 
-    runs-on: ${{ matrix.os }} #remove this 👈 # referencing the os defined by the matrix above
+    runs-on: ${{ matrix.os }}
 
     steps: 
       - name: Echo Docker Details
