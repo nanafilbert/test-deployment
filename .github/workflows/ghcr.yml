@@ -6,7 +6,7 @@ on:
 env:
     CONTAINER_REGISTRY: ghcr.io
     IMAGE_NAME: my-resume
-    Github_Username: filbertnana
+    Github_Username: nanafilbert
 
 permissions:
     id-token: write
