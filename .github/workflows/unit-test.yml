@@ -10,6 +10,7 @@ jobs:
     unit-testing:
         name: Unit Testing
         strategy:
+          max-parallel: 3 
           matrix: 
             nodejs_version: [18, 19, 20]
             os: [ubuntu-latest, macos-latest, windows-lastest]
