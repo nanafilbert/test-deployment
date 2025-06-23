@@ -1,20 +1,21 @@
-name: Common Test Workflow
+name: Deployment Workflow
 
 on:
   workflow_call:
-
+    inputs:
+      environment:
+        required: true
+        type: string
+        default: 'production'
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Check Out Code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Tests
-        run: npm test
-        
+      - name: Deploy Application
+        run: |
+          echo "Deploying to ${{ inputs.environment }} environment"
