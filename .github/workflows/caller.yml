@@ -18,7 +18,6 @@ jobs:
       environment: staging
 
   deploy_prod:
-    needs: deploy_staging
     uses: ./.github/workflows/reusable.yml
     with:
       environment: production
