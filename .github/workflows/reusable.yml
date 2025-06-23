@@ -1,12 +1,12 @@
+# .github/workflows/reusable.yml
 name: Deployment Workflow
 
 on:
-  workflow_call: 
-        inputs:
-         environment:
-           required: true       
-           type: string
-           default: 'production'
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        default: 'production'
 
 jobs:
   deploy:
@@ -18,4 +18,4 @@ jobs:
 
       - name: Deploy Application
         run: |
-          echo "Deploying to ${{ inputs.environment }} environment"
+          echo "🚀 Deploying to ${{ inputs.environment }} environment"
