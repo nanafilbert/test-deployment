@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    environment: prod
+    environment: staging
     name: Deploy to EC2
     runs-on: ubuntu-latest
 
@@ -64,4 +64,3 @@ jobs:
           "text": "\n🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥\n❌ *Workflow Workflow FOR Deployment to EC2 Failed!* 🚨\n💥 *Repository:* `${{ github.repository }}`\n🔗 *Commit:* <${{ github.event.head_commit.url }}|View Commit>\n⚠️ Please check the logs for details.\n🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥"
           }' ${{ secrets.SLACK_WEBHOOK_URL }} 2>&1)
           echo "Slack Response: $response"
-          
