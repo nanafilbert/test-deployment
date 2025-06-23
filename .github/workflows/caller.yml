@@ -1,8 +1,24 @@
-name: Run Tests on PR
+name: Deploy to various Environments
 
 on:
- push
+  push:
+    branches:
+       main
 
 jobs:
-  test:
+  deploy_dev:
     uses: ./.github/workflows/reusable.yml
+    with:
+      environment: dev
+
+  deploy_staging:
+    needs: deploy_dev
+    uses: ./.github/workflows/reusable.yml
+    with:
+      environment: staging
+
+  deploy_prod:
+    needs: deploy_staging
+    uses: ./.github/workflows/reusable.yml
+    with:
+      environment: production
