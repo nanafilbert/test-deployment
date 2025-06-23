@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Test deployment project",
   "main": "index.js",
-  "scripts": {
-  "test": "echo \"No tests yet\""
+"scripts": {
+  "lint": "eslint ."
 },
   "repository": {
     "type": "git",
