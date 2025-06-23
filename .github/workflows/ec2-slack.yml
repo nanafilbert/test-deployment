@@ -1,0 +1,67 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    environment: prod
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2 Server
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.HOST_DNS }} #public IP of the EC2 instance
+          REMOTE_USER: ${{ secrets.EC2_USER }}
+          TARGET: nana
+
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo apt-get -y update
+            
+            #Install Apache web server for launching the application
+            sudo apt-get install -y apache2
+            sudo systemctl daemon-reload
+            sudo systemctl start apache2
+            sudo systemctl enable apache2
+            
+            cd nana
+            
+            # Remove existing contents of /var/www/html
+            sudo rm -rf /var/www/html/*
+           
+            # Move new files to /var/www/html
+            sudo mv * /var/www/html
+
+    # ✅ Send Slack Notification on Success
+      - name: Send Slack Notification (Success)
+        if: success()
+        run: |
+          response=$(curl -X POST -H 'Content-type: application/json' --data '{
+          "text": "\n🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩\n✅ *Workflow FOR Deployment to EC2 Completed Successfully!* 🎉\n🚀 *Repository:* `${{ github.repository }}`\n🔗 *Commit:* <${{ github.event.head_commit.url }}|View Commit>`\n🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩"
+          }' ${{ secrets.SLACK_WEBHOOK_URL }} 2>&1)
+          echo "Slack Response: $response"
+        
+
+    # ❌ Send Slack Notification on Failure
+      - name: Send Slack Notification (Failure)
+        if: failure()
+        run: |
+          response=$(curl -X POST -H 'Content-type: application/json' --data '{
+          "text": "\n🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥\n❌ *Workflow Workflow FOR Deployment to EC2 Failed!* 🚨\n💥 *Repository:* `${{ github.repository }}`\n🔗 *Commit:* <${{ github.event.head_commit.url }}|View Commit>\n⚠️ Please check the logs for details.\n🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥"
+          }' ${{ secrets.SLACK_WEBHOOK_URL }} 2>&1)
+          echo "Slack Response: $response"
+          
