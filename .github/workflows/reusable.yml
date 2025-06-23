@@ -1,21 +1,18 @@
-name: Deployment Workflow
+name: secret scan
 
 on:
   workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-        default: 'production'
 
 jobs:
-  deploy:
+  security:
     runs-on: ubuntu-latest
 
     steps:
       - name: Check Out Code
         uses: actions/checkout@v4
 
-      - name: Deploy Application
-        run: |
-          echo "Deploying to ${{ inputs.environment }} environment"
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Run Secret Scan
+        run: secret-tool scan .
