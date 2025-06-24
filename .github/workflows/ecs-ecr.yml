@@ -1,4 +1,4 @@
-name: Build and Push to AWS ECR, then deploy to ECS Fargate
+name: Build and Push to AWS ECR, then deploy to ECS on ec2
 
 on:
   push:
