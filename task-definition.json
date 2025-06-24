@@ -1,10 +1,12 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-2:559050227308:task-definition/resume-app-task-definition:1",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-2:559050227308:task-definition/resume-app-task:2",
     "containerDefinitions": [
         {
             "name": "resume-app-container",
-            "image": "559050227308.dkr.ecr.us-east-2.amazonaws.com/resume-app/repo",
-            "cpu": 0,
+            "image": "559050227308.dkr.ecr.us-east-2.amazonaws.com/resume-app/repo:latest",
+            "cpu": 1024,
+            "memory": 3072,
+            "memoryReservation": 1024,
             "portMappings": [
                 {
                     "name": "resume-app-container-80-tcp",
@@ -23,7 +25,7 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/resume-app-task-definition",
+                    "awslogs-group": "/ecs/resume-app-task",
                     "mode": "non-blocking",
                     "awslogs-create-group": "true",
                     "max-buffer-size": "25m",
@@ -35,11 +37,11 @@
             "systemControls": []
         }
     ],
-    "family": "resume-app-task-definition",
+    "family": "resume-app-task",
     "taskRoleArn": "arn:aws:iam::559050227308:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::559050227308:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 1,
+    "revision": 2,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -57,6 +59,9 @@
         },
         {
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
         },
         {
             "name": "com.amazonaws.ecs.capability.task-iam-role"
@@ -88,7 +93,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-06-24T09:31:48.073Z",
+    "registeredAt": "2025-06-24T10:51:34.400Z",
     "registeredBy": "arn:aws:iam::559050227308:user/nana",
     "enableFaultInjection": false,
     "tags": []
