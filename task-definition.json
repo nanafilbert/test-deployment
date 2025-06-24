@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-2:559050227308:task-definition/resume-app-task:2",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-2:559050227308:task-definition/resume-app-task:4",
     "containerDefinitions": [
         {
             "name": "resume-app-container",
@@ -18,10 +18,8 @@
             ],
             "essential": true,
             "environment": [],
-            "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
-            "ulimits": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
@@ -31,8 +29,7 @@
                     "max-buffer-size": "25m",
                     "awslogs-region": "us-east-2",
                     "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
+                }
             },
             "systemControls": []
         }
@@ -41,7 +38,7 @@
     "taskRoleArn": "arn:aws:iam::559050227308:role/ecsTaskExecutionRole",
     "executionRoleArn": "arn:aws:iam::559050227308:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 2,
+    "revision": 4,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -93,8 +90,8 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-06-24T10:51:34.400Z",
-    "registeredBy": "arn:aws:iam::559050227308:user/nana",
+    "registeredAt": "2025-06-24T11:05:25.381Z",
+    "registeredBy": "arn:aws:iam::559050227308:user/s3-deploy",
     "enableFaultInjection": false,
     "tags": []
 }
