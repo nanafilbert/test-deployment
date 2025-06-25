@@ -1,5 +1,5 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-2:559050227308:task-definition/resume-app-task-definition:5",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-2:559050227308:task-definition/resume-app-task-definition:13",
     "containerDefinitions": [
         {
             "name": "resume-app-container",
@@ -17,10 +17,8 @@
             ],
             "essential": true,
             "environment": [],
-            "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
-            "ulimits": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
@@ -30,15 +28,14 @@
                     "max-buffer-size": "25m",
                     "awslogs-region": "us-east-2",
                     "awslogs-stream-prefix": "ecs"
-                },
-                "secretOptions": []
+                }
             },
             "systemControls": []
         }
     ],
     "family": "resume-app-task-definition",
     "executionRoleArn": "arn:aws:iam::559050227308:role/ecsTaskExecutionRole",
-    "revision": 5,
+    "revision": 13,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -61,9 +58,6 @@
             "name": "ecs.capability.execution-role-ecr-pull"
         },
         {
-            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
-        },
-        {
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
         }
     ],
@@ -80,8 +74,8 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2025-06-24T11:57:15.673Z",
-    "registeredBy": "arn:aws:iam::559050227308:user/nana",
+    "registeredAt": "2025-06-25T04:47:52.464Z",
+    "registeredBy": "arn:aws:iam::559050227308:user/s3-deploy",
     "enableFaultInjection": false,
     "tags": []
 }
