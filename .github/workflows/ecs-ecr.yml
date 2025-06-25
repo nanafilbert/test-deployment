@@ -1,4 +1,4 @@
-name: Build and Push to AWS ECR, then deploy to ECS on ec2
+name: Build, Scan, Push to ECR & Deploy to ECS
 
 on:
   push:
@@ -32,24 +32,45 @@ jobs:
         docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest .
 
     - name: Tag Docker image
-      run: |
-        docker tag ${{ secrets.ECR_REPOSITORY_URI }}:latest ${{ secrets.ECR_REPOSITORY_URI }}:latest
+      run: docker tag ${{ secrets.ECR_REPOSITORY_URI }}:latest ${{ secrets.ECR_REPOSITORY_URI }}:latest
 
     - name: Push Docker image to Amazon ECR
-      run: |
-        docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
+      run: docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
 
-    - name: Fill in the new image ID in the Amazon ECS task definition
+    # -------------------------------
+    # SNYK SCAN (Vulnerability Scan)
+    # -------------------------------
+    - name: Run Snyk to check Docker image for vulnerabilities
+      uses: snyk/actions/docker@v1
+      continue-on-error: true  # Prevents breaking the pipeline unless critical
+      with:
+        image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
+        args: --severity-threshold=medium
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+    # -------------------------------
+    # SONARQUBE SCAN (Code Quality)
+    # -------------------------------
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@v2
+      with:
+        projectBaseDir: .
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # optional if using SonarCloud
+
+    - name: Fill in new image ID in task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ./task-definition.json
-        container-name: ${{ secrets.CONTAINER_NAME }} 
+        container-name: ${{ secrets.CONTAINER_NAME }}
         image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
 
     - name: Debug Rendered Task Definition
-      run: cat ${{ steps.task-def.outputs.task-definition }}  
-      
+      run: cat ${{ steps.task-def.outputs.task-definition }}
+
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v2
       with:
@@ -57,5 +78,3 @@ jobs:
         service: ${{ secrets.ECS_SERVICE }}
         cluster: ${{ secrets.ECS_CLUSTER }}
         wait-for-service-stability: true
-
-#.
