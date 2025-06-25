@@ -45,17 +45,15 @@ jobs:
         name: coverage-report
         path: coverage/
 
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      with:
-        args: >
-          -Dsonar.projectKey=test-deployment \
-          -Dsonar.organization=filbertnanablessing \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.sources=. \
-          -Dsonar.exclusions=node_modules/**
+    - name: Run SonarCloud Scan
+      run: |
+        sonar-scanner \
+         -Dsonar.projectKey=test-deployment \
+         -Dsonar.organization=filbertnanablessing \
+         -Dsonar.host.url=https://sonarcloud.io \
+         -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+         -Dsonar.sources=. \
+         -Dsonar.exclusions=node_modules/**
 
     - name: 🔐 Secrets Scan (Optional)
       run: |
