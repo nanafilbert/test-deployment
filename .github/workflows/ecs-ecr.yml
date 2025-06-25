@@ -1,4 +1,4 @@
-name: Build, Scan, Push to ECR & Deploy to ECS
+name: Full CI/CD Pipeline with ECR & ECS (EC2)
 
 on:
   push:
@@ -13,54 +13,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
+    - name: 📥 Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up AWS Credentials
+    - name: ⚙️ Set up AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Log in to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v2
-
-    - name: Build Docker image
-      id: build-image
-      run: |
-        docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest .
-
-    - name: Tag Docker image
-      run: docker tag ${{ secrets.ECR_REPOSITORY_URI }}:latest ${{ secrets.ECR_REPOSITORY_URI }}:latest
-
-    - name: Push Docker image to Amazon ECR
-      run: docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
-
-    # -------------------------------
-    # SNYK SCAN (Vulnerability Scan)
-    # -------------------------------
-    - name: Run Snyk to check Docker image for vulnerabilities
-      uses: snyk/actions/docker@v1
-      continue-on-error: true  # Prevents breaking the pipeline unless critical
+    - name: 🛡️ Snyk Vulnerability Scan
+      uses: snyk/actions/docker@0.4.0
+      continue-on-error: true
       with:
         image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
-        args: --severity-threshold=medium
+        args: --severity-threshold=high
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-    # -------------------------------
-    # SONARQUBE SCAN (Code Quality)
-    # -------------------------------
-    - name: SonarQube Scan
-      uses: sonarsource/sonarqube-scan-action@v2
+    - name: 🧪 Run Lint and Tests
+      run: |
+        npm install
+        npm run lint
+        npm test -- --coverage
+
+    - name: 📦 Upload Test Coverage
+      uses: actions/upload-artifact@v4
       with:
-        projectBaseDir: .
+        name: coverage-report
+        path: coverage/
+
+    - name: 🔍 SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # optional if using SonarCloud
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-    - name: Fill in new image ID in task definition
+    - name: 🔐 Secrets Scan (Optional)
+      run: |
+        pip install detect-secrets
+        detect-secrets scan > .secrets.baseline
+        detect-secrets audit .secrets.baseline
+
+    - name: 🐳 Log in to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: 🛠️ Build Docker Image
+      run: |
+        docker build -t ${{ secrets.ECR_REPOSITORY_URI }}:latest .
+
+    - name: 🏷️ Tag Docker Image
+      run: |
+        docker tag ${{ secrets.ECR_REPOSITORY_URI }}:latest ${{ secrets.ECR_REPOSITORY_URI }}:latest
+
+    - name: 🚀 Push Docker Image to Amazon ECR
+      run: |
+        docker push ${{ secrets.ECR_REPOSITORY_URI }}:latest
+
+    - name: 📝 Render ECS Task Definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
@@ -68,10 +79,10 @@ jobs:
         container-name: ${{ secrets.CONTAINER_NAME }}
         image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
 
-    - name: Debug Rendered Task Definition
+    - name: 🧾 Debug Task Definition
       run: cat ${{ steps.task-def.outputs.task-definition }}
 
-    - name: Deploy Amazon ECS task definition
+    - name: 🚢 Deploy to ECS
       uses: aws-actions/amazon-ecs-deploy-task-definition@v2
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
