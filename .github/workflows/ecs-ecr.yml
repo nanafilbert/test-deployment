@@ -44,11 +44,17 @@ jobs:
         name: coverage-report
         path: coverage/
 
-    - name: 🔍 SonarQube Scan
+    - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      with:
+        args: >
+          -Dsonar.projectKey=test-deployment
+          -Dsonar.organization=your-org-name
+          -Dsonar.host.url=https://sonarqube.io
+          -Dsonar.sources=.
+          -Dsonar.exclusions=node_modules/**
 
     - name: 🔐 Secrets Scan (Optional)
       run: |
