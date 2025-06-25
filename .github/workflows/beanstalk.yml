@@ -28,7 +28,10 @@ jobs:
         run: npm install
 
       - name: Zip application files
-        run: zip -r application.zip .
+        run: |
+          zip -r application.zip . \
+            -x "*.git*" "node_modules/*" "*.md" "*.sh" "Dockerfile" "sonar-project.properties" \
+            "task-definition.json" ".github/*" "css/*" "js/*" "images/*"
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
