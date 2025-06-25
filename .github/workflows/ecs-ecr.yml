@@ -28,6 +28,7 @@ jobs:
       continue-on-error: true
       with:
         image: ${{ secrets.ECR_REPOSITORY_URI }}:latest
+        command: monitor
         args: --severity-threshold=high
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -50,9 +51,9 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.projectKey=test-deployment
-          -Dsonar.organization=your-org-name
-          -Dsonar.host.url=https://sonarqube.io
+          -Dsonar.projectKey=test-deployment /
+          -Dsonar.organization=Filbert Nana Blessing /
+          -Dsonar.host.url=https://sonarcloud.io /
           -Dsonar.sources=.
           -Dsonar.exclusions=node_modules/**
 
