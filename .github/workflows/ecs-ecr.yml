@@ -51,10 +51,10 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.projectKey=test-deployment /
-          -Dsonar.organization=Filbert Nana Blessing /
-          -Dsonar.host.url=https://sonarcloud.io /
-          -Dsonar.sources=.
+          -Dsonar.projectKey=test-deployment \
+          -Dsonar.organization=filbertnanablessing \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.sources=. \
           -Dsonar.exclusions=node_modules/**
 
     - name: 🔐 Secrets Scan (Optional)
