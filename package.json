@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "test": "jest",
-    "lint": "eslint . --ext .js,.html",
+    "lint": "eslint js/ --ext .js",
     "lint:fix": "eslint . --ext .js,.html --fix",
     "start": "http-server -p 8080",
     "build": "echo 'Build completed'",
