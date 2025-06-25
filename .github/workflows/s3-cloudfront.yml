@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+   
 jobs:
   deploy:
     name: Deploy
@@ -21,7 +22,11 @@ jobs:
 
       - name: Sync files to S3
         run: |
-          aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} --delete --exclude ".*" --exclude "dockerfile" --exclude "*.txt"
+          aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} --delete \
+            --exclude ".git/*" \
+            --exclude "node_modules/*" \
+            --exclude ".github/*"
+
 
       - name: Invalidate CloudFront cache
         run: |
