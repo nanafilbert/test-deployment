@@ -45,6 +45,9 @@ jobs:
         name: coverage-report
         path: coverage/
 
+    - name: Install Sonar Scanner
+      run: npm install -g sonarqube-scanner
+
     - name: Run SonarCloud Scan
       run: |
         sonar-scanner \
